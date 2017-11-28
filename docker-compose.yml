@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  data:
+    image: postgres:9.6
+    volumes:
+      - /var/lib/postgresql
+    command: "true"
+
+  postgres:
+    restart: always
+    build: ./postgresql
+    volumes_from:
+      - data
+    ports:
+      - "5432:5432"
