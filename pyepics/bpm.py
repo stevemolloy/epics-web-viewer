@@ -1,15 +1,19 @@
 from epics import PV
 import os
+from scipy.fftpack import rfft
+import numpy as np
+
 
 PVROOT = "BPM:"
-
 os.environ['EPICS_CA_ADDR_LIST'] = '10.0.16.173'
 os.environ['EPICS_CA_AUTO_ADDR_LIST'] = 'NO'
 os.environ['EPICS_CA_MAX_ARRAY_BYTES'] = '200000000'
 
+
 def triggerAquisition():
     aquisitionPV = PV(f'{PVROOT}Acquire')
     aquisitionPV.value = 1
+
 
 class BPMdata:
     def __init__(self, BPMnum):
@@ -45,4 +49,3 @@ class BPMdata:
     def sumSigPhaseSpectrum(self):
         p = self.sumSigPhase()
         return abs(rfft(p - np.mean(p))[1:])
-
