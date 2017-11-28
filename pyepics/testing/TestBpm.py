@@ -1,4 +1,6 @@
 import unittest
+import numpy as np
+from time import sleep
 from ..bpm import BPMdata, triggerAquisition
 
 
@@ -42,3 +44,12 @@ class TestBPMdata(unittest.TestCase):
         numpts = self.bpm2.numSampPointsPV.get()
         ypos_len2 = len(self.bpm2.yPos())
         self.assertEqual(numpts - 2, ypos_len2)  # Huh!?
+
+    def test_sumsignal_changes(self):
+        original_sumsignal1 = self.bpm1.sumSigAmp()
+        original_sumsignal2 = self.bpm2.sumSigAmp()
+
+        sleep(1.5)
+
+        self.assertTrue(~np.all(original_sumsignal1 == self.bpm1.sumSigAmp()))
+        self.assertTrue(~np.all(original_sumsignal2 == self.bpm2.sumSigAmp()))
