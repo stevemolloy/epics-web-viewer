@@ -17,14 +17,14 @@ def triggerAquisition():
 
 class BPMdata:
     def __init__(self, BPMnum):
-        PVNameRoot = f'{PVROOT}TS' + str(BPMnum) + ':'
+        PVNameRoot = f'{PVROOT}TS{BPMnum}:'
         
         self.numSampPointsPV = PV(f'{PVROOT}NumBPMSamples_RBV')
         
-        self.sumSigAmpPV = PV(PVNameRoot + '2:TimeSeries')
-        self.sumSigPhasePV = PV(PVNameRoot + '3:TimeSeries')
-        self.xPosPV = PV(PVNameRoot + '0:TimeSeries')
-        self.yPosPV = PV(PVNameRoot + '1:TimeSeries')
+        self.sumSigAmpPV = PV(f'{PVNameRoot}2:TimeSeries')
+        self.sumSigPhasePV = PV(f'{PVNameRoot}3:TimeSeries')
+        self.xPosPV = PV(f'{PVNameRoot}0:TimeSeries')
+        self.yPosPV = PV(f'{PVNameRoot}1:TimeSeries')
         
     def sumSigAmp(self):
         num_samps = self.numSampPointsPV.get()
