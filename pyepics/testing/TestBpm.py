@@ -3,7 +3,10 @@ from ..bpm import BPMdata, triggerAquisition
 
 
 class TestBPMdata(unittest.TestCase):
-    def test_aquisition_works(self):
+    def setUp(self):
         triggerAquisition()
-        bpm = BPMdata(1)
-        self.assertGreater(bpm.numSampPointsPV.get(), 0)
+        self.bpm1 = BPMdata(1)
+        self.bpm2 = BPMdata(2)
+
+    def test_aquisition_works(self):
+        self.assertGreater(self.bpm1.numSampPointsPV.get(), 0)
