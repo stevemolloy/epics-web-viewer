@@ -11,37 +11,37 @@ class TestBPMdata(unittest.TestCase):
         self.bpm2 = BPMdata(2)
 
     def test_aquisition_works(self):
-        self.assertGreater(self.bpm1.numSampPointsPV.get(), 0)
-        self.assertGreater(self.bpm2.numSampPointsPV.get(), 0)
+        self.assertGreater(self.bpm1.numpts, 0)
+        self.assertGreater(self.bpm2.numpts, 0)
 
     def test_sumsignal(self):
-        numpts = self.bpm1.numSampPointsPV.get()
+        numpts = self.bpm1.numpts
         sumsigamp_len1 = len(self.bpm1.sumSigAmp())
         sumsigphase_len1 = len(self.bpm1.sumSigPhase())
         self.assertEqual(numpts, sumsigamp_len1)
         self.assertEqual(numpts, sumsigphase_len1)
 
-        numpts = self.bpm2.numSampPointsPV.get()
+        numpts = self.bpm2.numpts
         sumsigamp_len2 = len(self.bpm2.sumSigAmp())
         sumsigphase_len2 = len(self.bpm2.sumSigPhase())
         self.assertEqual(numpts, sumsigamp_len2)
         self.assertEqual(numpts, sumsigphase_len2)
 
     def test_xpossignal(self):
-        numpts = self.bpm1.numSampPointsPV.get()
+        numpts = self.bpm1.numpts
         xpos_len1 = len(self.bpm1.xPos())
         self.assertEqual(numpts - 2, xpos_len1)  # Huh!?
 
-        numpts = self.bpm2.numSampPointsPV.get()
+        numpts = self.bpm2.numpts
         xpos_len2 = len(self.bpm2.xPos())
         self.assertEqual(numpts - 2, xpos_len2)  # Huh!?
 
     def test_ypossignal(self):
-        numpts = self.bpm1.numSampPointsPV.get()
+        numpts = self.bpm1.numpts
         ypos_len1 = len(self.bpm1.yPos())
         self.assertEqual(numpts - 2, ypos_len1)  # Huh!?
 
-        numpts = self.bpm2.numSampPointsPV.get()
+        numpts = self.bpm2.numpts
         ypos_len2 = len(self.bpm2.yPos())
         self.assertEqual(numpts - 2, ypos_len2)  # Huh!?
 

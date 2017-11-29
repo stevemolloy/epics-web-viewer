@@ -25,6 +25,10 @@ class BPMdata:
         self.sumSigPhasePV = PV(f'{PVNameRoot}3:TimeSeries')
         self.xPosPV = PV(f'{PVNameRoot}0:TimeSeries')
         self.yPosPV = PV(f'{PVNameRoot}1:TimeSeries')
+
+    @property
+    def numpts(self):
+        return self.numSampPointsPV.get()
         
     def sumSigAmp(self):
         num_samps = self.numSampPointsPV.get()
