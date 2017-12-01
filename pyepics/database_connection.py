@@ -1,6 +1,6 @@
 import os
-from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine, ForeignKey, desc
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from time import sleep
