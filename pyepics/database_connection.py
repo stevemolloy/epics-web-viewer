@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine
+from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -10,8 +10,15 @@ import threading
 
 Base = declarative_base()
 
+user = os.getenv('POSTGRESUSER')
+passwd = os.getenv('POSTGRESPASS')
+dbname = os.getenv('POSTGRESDBNAME')
+host = '0.0.0.0'
+port = '5432'
+engine = create_engine(f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}', echo=True)
 
-class BPMSumSignal(Base):
+
+class BPMSumAmplitude(Base):
     __tablename__ = 'bpm_sum_signal'
     id = Column(Integer, primary_key=True)
     signal = Column(ARRAY(Float))
@@ -19,15 +26,17 @@ class BPMSumSignal(Base):
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
 
+class BPMSumPhase(BPMSumAmplitude):
+    __tablename__ = 'bpm_phase_signal'
+    id = Column(Integer, ForeignKey('bpm_sum_signal.id'))
+
+
+Base.metadata.create_all(engine)
+
+
 class LockedDBUpdate:
     def __init__(self, bpm):
         self.lock = threading.Lock()
-        user = os.getenv('POSTGRESUSER')
-        passwd = os.getenv('POSTGRESPASS')
-        dbname = os.getenv('POSTGRESDBNAME')
-        host = '0.0.0.0'
-        port = '5432'
-        engine = create_engine(f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}', echo=True)
 
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -37,7 +46,11 @@ class LockedDBUpdate:
     def get_and_commit(self):
         with self.lock:
             try:
-                self.session.add(BPMSumSignal(signal=[float(a) for a in self.bpm.sumSigAmp()]))
+                self.session.add_all([
+                    BPMSumAmplitude(signal=[float(a) for a in self.bpm.sumSigAmp()]),
+                    BPMSumPhase(signal=[float(a) for a in self.bpm.sumSigPhase()]),
+                ])
+                self.session.add()
                 self.session.commit()
             except TypeError:
                 pass
