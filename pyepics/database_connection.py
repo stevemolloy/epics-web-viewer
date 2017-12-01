@@ -7,7 +7,6 @@ from time import sleep
 from pyepics.bpm import BPMdata
 import threading
 
-
 Base = declarative_base()
 
 user = os.getenv('POSTGRESUSER')
