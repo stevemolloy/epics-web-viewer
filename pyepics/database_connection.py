@@ -1,6 +1,6 @@
 import os
-from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine, ForeignKey
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine, ForeignKey, desc
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from time import sleep
@@ -26,9 +26,12 @@ class BPMSumAmplitude(Base):
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
 
-class BPMSumPhase(BPMSumAmplitude):
+class BPMSumPhase(Base):
     __tablename__ = 'bpm_phase_signal'
-    id = Column(Integer, ForeignKey('bpm_sum_signal.id'))
+    id = Column(Integer, primary_key=True)
+    signal = Column(ARRAY(Float))
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 Base.metadata.create_all(engine)
@@ -50,7 +53,6 @@ class LockedDBUpdate:
                     BPMSumAmplitude(signal=[float(a) for a in self.bpm.sumSigAmp()]),
                     BPMSumPhase(signal=[float(a) for a in self.bpm.sumSigPhase()]),
                 ])
-                self.session.add()
                 self.session.commit()
             except TypeError:
                 pass
