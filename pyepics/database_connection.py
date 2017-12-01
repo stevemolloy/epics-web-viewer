@@ -38,13 +38,13 @@ Base.metadata.create_all(engine)
 
 
 class LockedDBUpdate:
-    def __init__(self, bpm):
+    def __init__(self, bpmnum):
         self.lock = threading.Lock()
 
-        Session = sessionmaker(bind=engine)
-        self.session = Session()
+        db_session = sessionmaker(bind=engine)
+        self.session = db_session()
 
-        self.bpm = bpm
+        self.bpm = bpmnum
 
     def get_and_commit(self):
         with self.lock:
