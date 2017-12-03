@@ -10,7 +10,21 @@ services:
   postgres:
     restart: always
     build: ./postgresql
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     volumes_from:
       - data
     ports:
       - "5432:5432"
+
+#  pyepics:
+#    restart: always
+#    build: ./pyepicsContainer
+#    environment:
+#      - POSTGRESUSER
+#      - POSTGRESDBNAME
+#      - POSTGRESPASS
+#    depends_on:
+#      - postgres
