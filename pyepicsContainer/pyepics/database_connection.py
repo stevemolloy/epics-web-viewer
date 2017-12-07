@@ -4,14 +4,13 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from time import sleep
-from .bpm import BPMdata
 import threading
 
 Base = declarative_base()
 
-user = os.getenv('POSTGRESUSER')
-passwd = os.getenv('POSTGRESPASS')
-dbname = os.getenv('POSTGRESDBNAME')
+user = os.getenv('POSTGRES_USER')
+passwd = os.getenv('POSTGRES_PASSWORD')
+dbname = os.getenv('POSTGRES_DB')
 host = '0.0.0.0'
 port = '5432'
 engine = create_engine(f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}', echo=True)
@@ -58,6 +57,7 @@ class LockedDBUpdate:
 
 
 if __name__ == "__main__":
+    from bpm import BPMdata
     bpm = BPMdata(1)
     ldb = LockedDBUpdate(bpm)
     while True:
