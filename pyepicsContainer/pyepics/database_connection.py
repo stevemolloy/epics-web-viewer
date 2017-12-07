@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from time import sleep
-from pyepics.bpm import BPMdata
+from .bpm import BPMdata
 import threading
 
 Base = declarative_base()
