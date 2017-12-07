@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from time import sleep
-from ..bpm import BPMdata, triggerAquisition
+from pyepicsContainer.pyepics.bpm import BPMdata, triggerAquisition
 
 
 class TestBPMdata(unittest.TestCase):
