@@ -16,15 +16,18 @@ services:
       - POSTGRES_DB
     volumes_from:
       - data
+    expose:
+      - "5432"
     ports:
       - "5432:5432"
+    depends_on:
+      - data
 
-#  pyepics:
-#    restart: always
-#    build: ./pyepicsContainer
-#    environment:
-#      - POSTGRESUSER
-#      - POSTGRESDBNAME
-#      - POSTGRESPASS
-#    depends_on:
-#      - postgres
+  pyepics:
+    build: ./pyepicsContainer
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    depends_on:
+      - postgres
