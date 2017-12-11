@@ -1,13 +1,10 @@
 import os
-from sqlalchemy import ARRAY, Float, Column, Integer, DateTime, create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql import func
-from sqlalchemy.util.queue import Empty
-from time import sleep
 import threading
-
-Base = declarative_base()
+from time import sleep
+import database_connection as dbc
+from bpm import BPMdata
 
 user = os.getenv('POSTGRES_USER')
 passwd = os.getenv('POSTGRES_PASSWORD')
@@ -15,31 +12,13 @@ dbname = os.getenv('POSTGRES_DB')
 # host = '0.0.0.0'
 host = 'postgres'
 port = '5432'
-engine = create_engine(f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}', echo=True)
+engine = create_engine(
+        f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}',
+        echo=True
+    )
 
-
-class BPMSumAmplitude(Base):
-    __tablename__ = 'bpm_sum_signal'
-    id = Column(Integer, primary_key=True)
-    signal = Column(ARRAY(Float))
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
-
-
-class BPMSumPhase(Base):
-    __tablename__ = 'bpm_phase_signal'
-    id = Column(Integer, primary_key=True)
-    signal = Column(ARRAY(Float))
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
-
-
-while True:
-    try:
-        Base.metadata.create_all(engine)
-        break
-    except Empty:
-        sleep(2)
+BPMSumAmplitude = dbc.BPMSumAmplitude
+BPMSumPhase = dbc.BPMSumPhase
 
 
 class LockedDBUpdate:
@@ -63,12 +42,9 @@ class LockedDBUpdate:
                 pass
 
 
-if __name__ == "__main__":
-    sleep(10)
-    from bpm import BPMdata
-    bpm = BPMdata(1)
-    ldb = LockedDBUpdate(bpm)
-    while True:
-        print("hello!!!")
-        ldb.get_and_commit()
-        sleep(5)
+bpm = BPMdata(1)
+bpm_updater = LockedDBUpdate(bpm)
+
+while True:
+    bpm_updater.get_and_commit()
+    sleep(1)
