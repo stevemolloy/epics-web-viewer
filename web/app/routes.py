@@ -3,8 +3,7 @@ import base64
 import io
 from matplotlib import pyplot as plt
 import random
-from bokeh.models import (HoverTool, FactorRange, Plot, LinearAxis, Grid,
-                          Range1d)
+from bokeh.models import HoverTool, FactorRange, LinearAxis, Grid, Range1d
 from bokeh.models.glyphs import VBar
 from bokeh.plotting import figure
 from bokeh.embed import components
@@ -40,9 +39,9 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
     xdr = FactorRange(factors=[str(x) for x in data[x_name]])
     ydr = Range1d(start=0,end=max(data[y_name])*1.5)
 
-    tools = []
+    tools = ['pan', 'save', 'reset', 'box_zoom']
     if hover_tool:
-        tools = [hover_tool,]
+        tools += [hover_tool]
 
     plot = figure(title=title, x_range=xdr, y_range=ydr, plot_width=width,
                   plot_height=height, h_symmetry=False, v_symmetry=False,
@@ -96,7 +95,6 @@ def hello_world():
 
 @app.route('/matplotlib')
 def build_plot():
-
     img = io.BytesIO()
 
     y = [1,2,3,4,5]
