@@ -68,10 +68,9 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
     return plot
 
 
-@app.route("/bokeh/<int:bars_count>/")
-def chart(bars_count):
-    if bars_count <= 0:
-        bars_count = 1
+@app.route("/bokeh/")
+def chart():
+    bars_count = 20
 
     data = {"days": [], "bugs": [], "costs": []}
     for i in range(1, bars_count + 1):
