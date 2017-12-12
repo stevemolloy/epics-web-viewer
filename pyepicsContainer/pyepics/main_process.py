@@ -14,6 +14,7 @@ host = 'postgres'
 port = '5432'
 engine = create_engine(
         f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}',
+        isolation_level="READ UNCOMMITTED",
         echo=True
     )
 
