@@ -29,7 +29,6 @@ def create_bar_chart(data, width=1000, height=300):
        name of x axis, y axis and the hover tool HTML.
     """
     source = ColumnDataSource(data)
-    xdr = FactorRange(factors=[str(x) for x in data['points']])
     ydr = Range1d(start=0, end=max(data['vals'])*1.5)
 
     tools = ['pan', 'save', 'reset', 'box_zoom']
@@ -52,17 +51,16 @@ def chart():
         )
     db_session.configure(bind=engine)
     session = db_session()
-    obj = session.query(BPMSumAmplitude).order_by(BPMSumAmplitude.id.desc()).first()
-    print(obj.signal)
+    sumamp = session.query(BPMSumAmplitude).order_by(BPMSumAmplitude.id.desc()).first()
+    sumphase = session.query(BPMSumPhase).order_by(BPMSumPhase.id.desc()).first()
+    session.close()
 
     data = {
-        'points': range(len(obj.signal)),
-        'vals': obj.signal,
+        'points': range(len(sumamp.signal)),
+        'vals': sumamp.signal,
     }
     plot = create_bar_chart(data)
     script, div = components(plot)
-
-    session.close()
 
     return render_template("chart.html", the_div=div, the_script=script)
 
