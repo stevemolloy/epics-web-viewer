@@ -32,7 +32,10 @@ def create_charts(data, width=1000, height=300):
     sum_src = ColumnDataSource(data)
     ydr_amp = Range1d(start=0, end=max(data['amp_vals'])*1.5)
     phs_rms = np.std(data['phs_vals'])
-    ydr_phs = Range1d(start=min(data['phs_vals'])-5*phs_rms, end=max(data['phs_vals'])+5*phs_rms)
+    lims = 5*phs_rms
+    if lims > 180:
+        lims = 180
+    ydr_phs = Range1d(start=min(data['phs_vals'])-lims, end=max(data['phs_vals'])+lims)
 
     tools = ['pan', 'save', 'reset', 'box_zoom']
 
