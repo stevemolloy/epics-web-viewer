@@ -46,7 +46,7 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
     plot = figure(title=title, x_range=xdr, y_range=ydr, plot_width=width,
                   plot_height=height, h_symmetry=False, v_symmetry=False,
                   min_border=0, toolbar_location="above", tools=tools,
-                  responsive=True, outline_line_color="#666666")
+                  sizing_mode='scale_width', outline_line_color="#666666")
 
     glyph = VBar(x=x_name, top=y_name, bottom=0, width=.8,
                  fill_color="blue")
