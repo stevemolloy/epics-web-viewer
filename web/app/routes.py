@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 import base64
 import io
+import os
 from matplotlib import pyplot as plt
 import random
 from bokeh.models import HoverTool, FactorRange, LinearAxis, Grid, Range1d
@@ -8,7 +9,23 @@ from bokeh.models.glyphs import VBar
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models.sources import ColumnDataSource
-from pyepicsContainer.pyepics.bpm import BPMdata
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from pyepicsContainer.pyepics.initialise_db import BPMSumAmplitude, BPMSumPhase
+
+
+user = os.getenv('POSTGRES_USER')
+passwd = os.getenv('POSTGRES_PASSWORD')
+dbname = os.getenv('POSTGRES_DB')
+host = '0.0.0.0'
+# host = 'postgres'
+port = '5432'
+engine = create_engine(
+        f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}',
+        echo=True
+    )
+db_session = sessionmaker(bind=engine)
+session = db_session()
 
 
 app = Flask(__name__)
