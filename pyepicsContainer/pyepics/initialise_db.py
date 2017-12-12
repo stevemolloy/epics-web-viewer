@@ -7,17 +7,6 @@ from time import sleep
 
 Base = declarative_base()
 
-user = os.getenv('POSTGRES_USER')
-passwd = os.getenv('POSTGRES_PASSWORD')
-dbname = os.getenv('POSTGRES_DB')
-# host = '0.0.0.0'
-host = 'postgres'
-port = '5432'
-engine = create_engine(
-        f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}',
-        echo=True
-    )
-
 
 class BPMSumAmplitude(Base):
     __tablename__ = 'bpm_sum_signal'
@@ -35,10 +24,21 @@ class BPMSumPhase(Base):
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
 
-while True:
-    try:
-        print(engine)
-        Base.metadata.create_all(engine)
-        break
-    except Empty:
-        sleep(2)
+if __name__ == "__main__":
+    user = os.getenv('POSTGRES_USER')
+    passwd = os.getenv('POSTGRES_PASSWORD')
+    dbname = os.getenv('POSTGRES_DB')
+    # host = '0.0.0.0'
+    host = 'postgres'
+    port = '5432'
+    engine = create_engine(
+            f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}',
+            echo=True
+        )
+    while True:
+        try:
+            print(engine)
+            Base.metadata.create_all(engine)
+            break
+        except Empty:
+            sleep(2)
