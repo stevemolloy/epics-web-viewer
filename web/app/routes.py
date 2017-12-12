@@ -37,7 +37,7 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
     """
     source = ColumnDataSource(data)
     xdr = FactorRange(factors=[str(x) for x in data[x_name]])
-    ydr = Range1d(start=0,end=max(data[y_name])*1.5)
+    ydr = Range1d(start=0, end=max(data[y_name])*1.5)
 
     tools = ['pan', 'save', 'reset', 'box_zoom']
     if hover_tool:
@@ -97,9 +97,9 @@ def hello_world():
 def build_plot():
     img = io.BytesIO()
 
-    y = [1,2,3,4,5]
-    x = [0,2,1,3,4]
-    plt.plot(x,y)
+    y = [1, 2, 3, 4, 5]
+    x = [0, 2, 1, 3, 4]
+    plt.plot(x, y)
     plt.savefig(img, format='png')
     img.seek(0)
 
