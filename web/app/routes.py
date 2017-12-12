@@ -8,6 +8,7 @@ from bokeh.models.glyphs import VBar
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models.sources import ColumnDataSource
+from pyepicsContainer.pyepics.bpm import BPMdata
 
 
 app = Flask(__name__)
