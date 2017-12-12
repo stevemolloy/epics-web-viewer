@@ -25,10 +25,9 @@ db_session = sessionmaker()
 app = Flask(__name__)
 
 
-def create_bar_chart(data, width=1000, height=300):
-    """Creates a bar chart sum_plot with the exact styling for the centcom
-       dashboard. Pass in data as a dictionary, desired sum_plot title,
-       name of x axis, y axis and the hover tool HTML.
+def create_charts(data, width=1000, height=300):
+    """
+        Creates charts of the BPM-sum phase & amplitude
     """
     sum_src = ColumnDataSource(data)
     ydr_amp = Range1d(start=0, end=max(data['amp_vals'])*1.5)
@@ -69,7 +68,7 @@ def chart():
         'amp_vals': sumamp.signal,
         'phs_vals': sumphase.signal,
     }
-    plot = create_bar_chart(data)
+    plot = create_charts(data)
     script, div = components(plot)
 
     return render_template("chart.html", the_div=div, the_script=script)
