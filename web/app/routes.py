@@ -15,8 +15,19 @@ app = Flask(__name__)
 
 
 def create_hover_tool():
-    # we'll code this function in a moment
-    return None
+    """Generates the HTML for the Bokeh's hover data tool on our graph."""
+    hover_html = """
+      <div>
+        <span class="hover-tooltip">$x</span>
+      </div>
+      <div>
+        <span class="hover-tooltip">@bugs bugs</span>
+      </div>
+      <div>
+        <span class="hover-tooltip">$@costs{0.00}</span>
+      </div>
+    """
+    return HoverTool(tooltips=hover_html)
 
 
 def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
@@ -39,7 +50,7 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
                   responsive=True, outline_line_color="#666666")
 
     glyph = VBar(x=x_name, top=y_name, bottom=0, width=.8,
-                 fill_color="#e12127")
+                 fill_color="blue")
     plot.add_glyph(source, glyph)
 
     xaxis = LinearAxis()
@@ -50,9 +61,9 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
     plot.toolbar.logo = None
     plot.min_border_top = 0
     plot.xgrid.grid_line_color = None
-    plot.ygrid.grid_line_color = "#999999"
+    # plot.ygrid.grid_line_color = "#999999"
     plot.yaxis.axis_label = "Bugs found"
-    plot.ygrid.grid_line_alpha = 0.1
+    # plot.ygrid.grid_line_alpha = 0.1
     plot.xaxis.axis_label = "Days after app deployment"
     plot.xaxis.major_label_orientation = 1
     return plot
@@ -66,7 +77,7 @@ def chart(bars_count):
     data = {"days": [], "bugs": [], "costs": []}
     for i in range(1, bars_count + 1):
         data['days'].append(i)
-        data['bugs'].append(random.randint(1,100))
+        data['bugs'].append(random.randint(1, 100))
         data['costs'].append(random.uniform(1.00, 1000.00))
 
     hover = create_hover_tool()
