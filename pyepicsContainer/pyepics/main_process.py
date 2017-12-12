@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import threading
 from time import sleep
-import database_connection as dbc
+import initialise_db as dbc
 from bpm import BPMdata
 
 user = os.getenv('POSTGRES_USER')
