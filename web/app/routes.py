@@ -3,12 +3,14 @@ import base64
 import io
 import os
 from matplotlib import pyplot as plt
-from bokeh.models import FactorRange, Range1d
+from bokeh.models import Range1d
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models.sources import ColumnDataSource
+from bokeh.layouts import column
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import numpy as np
 from pyepicsContainer.pyepics.initialise_db import BPMSumAmplitude, BPMSumPhase
 
 
@@ -24,23 +26,30 @@ app = Flask(__name__)
 
 
 def create_bar_chart(data, width=1000, height=300):
-    """Creates a bar chart plot with the exact styling for the centcom
-       dashboard. Pass in data as a dictionary, desired plot title,
+    """Creates a bar chart sum_plot with the exact styling for the centcom
+       dashboard. Pass in data as a dictionary, desired sum_plot title,
        name of x axis, y axis and the hover tool HTML.
     """
-    source = ColumnDataSource(data)
-    ydr = Range1d(start=0, end=max(data['vals'])*1.5)
+    sum_src = ColumnDataSource(data)
+    ydr_amp = Range1d(start=0, end=max(data['amp_vals'])*1.5)
+    phs_rms = np.std(data['phs_vals'])
+    ydr_phs = Range1d(start=min(data['phs_vals'])-5*phs_rms, end=max(data['phs_vals'])+5*phs_rms)
 
     tools = ['pan', 'save', 'reset', 'box_zoom']
 
-    plot = figure(title='BPM Sum Data', y_range=ydr, plot_width=width,
+    sum_plot = figure(title='BPM Sum Data', y_range=ydr_amp, plot_width=width,
                   plot_height=height, h_symmetry=False, v_symmetry=False,
                   min_border=0, toolbar_location="above", tools=tools,
                   sizing_mode='scale_width')
+    sum_plot.circle(x='points', y='amp_vals', source=sum_src)
 
-    plot.circle(x='points', y='vals', source=source)
+    phs_plot = figure(title='BPM Phase Data', y_range=ydr_phs, plot_width=width,
+                  plot_height=height, h_symmetry=False, v_symmetry=False,
+                  min_border=0, toolbar_location="above", tools=tools,
+                  sizing_mode='scale_width')
+    phs_plot.circle(x='points', y='phs_vals', source=sum_src)
 
-    return plot
+    return column([sum_plot, phs_plot])
 
 
 @app.route("/bokeh/")
@@ -57,7 +66,8 @@ def chart():
 
     data = {
         'points': range(len(sumamp.signal)),
-        'vals': sumamp.signal,
+        'amp_vals': sumamp.signal,
+        'phs_vals': sumphase.signal,
     }
     plot = create_bar_chart(data)
     script, div = components(plot)
