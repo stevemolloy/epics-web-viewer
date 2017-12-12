@@ -60,9 +60,7 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
     plot.toolbar.logo = None
     plot.min_border_top = 0
     plot.xgrid.grid_line_color = None
-    # plot.ygrid.grid_line_color = "#999999"
     plot.yaxis.axis_label = "Bugs found"
-    # plot.ygrid.grid_line_alpha = 0.1
     plot.xaxis.axis_label = "Days after app deployment"
     plot.xaxis.major_label_orientation = 1
     return plot
@@ -80,12 +78,10 @@ def chart(bars_count):
         data['costs'].append(random.uniform(1.00, 1000.00))
 
     hover = create_hover_tool()
-    plot = create_bar_chart(data, "Bugs found per day", "days",
-                            "bugs", hover)
+    plot = create_bar_chart(data, "Bugs found per day", "days", "bugs", hover)
     script, div = components(plot)
 
-    return render_template("chart.html", bars_count=bars_count,
-                           the_div=div, the_script=script)
+    return render_template("chart.html", bars_count=bars_count, the_div=div, the_script=script)
 
 
 @app.route('/')
