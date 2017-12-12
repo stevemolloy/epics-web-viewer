@@ -27,7 +27,6 @@ engine = create_engine(
 db_session = sessionmaker(bind=engine)
 session = db_session()
 
-
 app = Flask(__name__)
 
 
@@ -86,6 +85,8 @@ def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
 
 @app.route("/bokeh/")
 def chart():
+    obj = session.query(BPMSumAmplitude).order_by(BPMSumAmplitude.id.desc()).first()
+    print(obj.signal)
     bars_count = 20
 
     data = {"days": [], "bugs": [], "costs": []}
