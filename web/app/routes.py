@@ -74,7 +74,7 @@ def chart():
     plot = create_charts(data)
     script, div = components(plot)
 
-    return render_template("chart.html", the_div=div, the_script=script)
+    return render_template("chart.html", timestamp=sumamp.time_created, the_div=div, the_script=script)
 
 
 @app.route('/')
