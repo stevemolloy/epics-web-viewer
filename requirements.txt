@@ -5,10 +5,12 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 numpy==1.13.3
+psycopg2==2.7.3.2
 pyepics==3.3.0
 python-dateutil==2.6.1
 PyYAML==3.12
 scipy==1.0.0
 six==1.11.0
+SQLAlchemy==1.1.15
 tornado==4.5.2
 Werkzeug==0.12.2
