@@ -1,8 +1,5 @@
 from flask import Flask, render_template
-import base64
-import io
 import os
-from matplotlib import pyplot as plt
 from bokeh.models import Range1d
 from bokeh.plotting import figure
 from bokeh.embed import components
