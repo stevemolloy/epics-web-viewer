@@ -54,7 +54,7 @@ def create_charts(data, width=1000, height=300):
     return column([sum_plot, phs_plot])
 
 
-@app.route("/bokeh/")
+@app.route("/")
 def chart():
     engine = create_engine(
             f'postgresql://{user}:{passwd}@{host}:{port}/{dbname}',
@@ -75,26 +75,6 @@ def chart():
     script, div = components(plot)
 
     return render_template("chart.html", timestamp=sumamp.time_created, the_div=div, the_script=script)
-
-
-@app.route('/')
-def hello_world():
-    return render_template('home.html')
-
-
-@app.route('/matplotlib')
-def build_plot():
-    img = io.BytesIO()
-
-    y = [1, 2, 3, 4, 5]
-    x = [0, 2, 1, 3, 4]
-    plt.plot(x, y)
-    plt.savefig(img, format='png')
-    img.seek(0)
-
-    plot_url = base64.b64encode(img.getvalue()).decode()
-
-    return '<img src="data:image/png;base64,{}">'.format(plot_url)
 
 
 if __name__ == '__main__':
