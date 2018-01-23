@@ -34,14 +34,15 @@ class LockedDBUpdate:
         with self.lock:
             try:
                 self.session.add_all([
-                    CCStrace1(signal=[float(a) for a in self.pv.get() if abs(float(a))<1.0]),
+                    CCStrace1(signal=[float(a) for a in self.pv.get()]),
                 ])
                 self.session.commit()
             except TypeError:
                 pass
 
 
-process_variable = PV('CCS1:trace1:ArrayData')
+#process_variable = PV('CCS1:trace1:ArrayData')
+process_variable = PV('CAM1:image1:ArrayData')
 updater = LockedDBUpdate(process_variable)
 
 while True:

@@ -22,20 +22,17 @@ db_session = sessionmaker()
 app = Flask(__name__)
 
 
-def create_charts(data, width=1000, height=300):
+def create_charts(data):
     """
         Creates charts of a PV kept in the postgres DB
     """
     sum_src = ColumnDataSource(data)
-    ydr_amp = Range1d(start=min(data['amp_vals'])*1.5, end=max(data['amp_vals'])*1.5)
+    plot_data = np.array(data['amp_vals']).reshape((1024, 1024))
 
     tools = ['pan', 'save', 'reset', 'box_zoom']
 
-    amp_plot = figure(title='Postgres Data', y_range=ydr_amp, plot_width=width,
-                  plot_height=height, h_symmetry=False, v_symmetry=False,
-                  min_border=0, toolbar_location="above", tools=tools,
-                  sizing_mode='scale_width')
-    amp_plot.circle(x='points', y='amp_vals', source=sum_src)
+    amp_plot = figure(x_range=(0, 1024), y_range=(0, 1024))
+    amp_plot.image(image=[plot_data], x=0, y=0, dw=1024, dh=1024, palette='Spectral11')
 
     return column([amp_plot])
 
