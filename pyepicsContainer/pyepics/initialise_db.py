@@ -8,16 +8,8 @@ from time import sleep
 Base = declarative_base()
 
 
-class BPMSumAmplitude(Base):
-    __tablename__ = 'bpm_sum_signal'
-    id = Column(Integer, primary_key=True)
-    signal = Column(ARRAY(Float))
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
-
-
-class BPMSumPhase(Base):
-    __tablename__ = 'bpm_phase_signal'
+class CCStrace1(Base):
+    __tablename__ = 'ccs_trace1'
     id = Column(Integer, primary_key=True)
     signal = Column(ARRAY(Float))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
@@ -42,3 +34,4 @@ if __name__ == "__main__":
             break
         except Empty:
             sleep(2)
+

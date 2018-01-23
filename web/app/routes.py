@@ -8,7 +8,7 @@ from bokeh.layouts import column
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import numpy as np
-from pyepicsContainer.pyepics.initialise_db import BPMSumAmplitude, BPMSumPhase
+from pyepicsContainer.pyepics.initialise_db import CCStrace1
 
 
 user = os.getenv('POSTGRES_USER')
@@ -24,31 +24,20 @@ app = Flask(__name__)
 
 def create_charts(data, width=1000, height=300):
     """
-        Creates charts of the BPM-sum phase & amplitude
+        Creates charts of a PV kept in the postgres DB
     """
     sum_src = ColumnDataSource(data)
-    ydr_amp = Range1d(start=0, end=max(data['amp_vals'])*1.5)
-    phs_rms = np.std(data['phs_vals'])
-    lims = 5*phs_rms
-    if lims > 180:
-        lims = 180
-    ydr_phs = Range1d(start=min(data['phs_vals'])-lims, end=max(data['phs_vals'])+lims)
+    ydr_amp = Range1d(start=min(data['amp_vals'])*1.5, end=max(data['amp_vals'])*1.5)
 
     tools = ['pan', 'save', 'reset', 'box_zoom']
 
-    sum_plot = figure(title='BPM Sum Data', y_range=ydr_amp, plot_width=width,
+    amp_plot = figure(title='Postgres Data', y_range=ydr_amp, plot_width=width,
                   plot_height=height, h_symmetry=False, v_symmetry=False,
                   min_border=0, toolbar_location="above", tools=tools,
                   sizing_mode='scale_width')
-    sum_plot.circle(x='points', y='amp_vals', source=sum_src)
+    amp_plot.circle(x='points', y='amp_vals', source=sum_src)
 
-    phs_plot = figure(title='BPM Phase Data', y_range=ydr_phs, plot_width=width,
-                  plot_height=height, h_symmetry=False, v_symmetry=False,
-                  min_border=0, toolbar_location="above", tools=tools,
-                  sizing_mode='scale_width')
-    phs_plot.circle(x='points', y='phs_vals', source=sum_src)
-
-    return column([sum_plot, phs_plot])
+    return column([amp_plot])
 
 
 @app.route("/")
@@ -59,19 +48,17 @@ def chart():
         )
     db_session.configure(bind=engine)
     session = db_session()
-    sumamp = session.query(BPMSumAmplitude).order_by(BPMSumAmplitude.id.desc()).first()
-    sumphase = session.query(BPMSumPhase).order_by(BPMSumPhase.id.desc()).first()
+    postgres_data = session.query(CCStrace1).order_by(CCStrace1.id.desc()).first()
     session.close()
 
     data = {
-        'points': range(len(sumamp.signal)),
-        'amp_vals': sumamp.signal,
-        'phs_vals': sumphase.signal,
+        'points': range(len(postgres_data.signal)),
+        'amp_vals': postgres_data.signal,
     }
     plot = create_charts(data)
     script, div = components(plot)
 
-    return render_template("chart.html", timestamp=sumamp.time_created, the_div=div, the_script=script)
+    return render_template("chart.html", timestamp=postgres_data.time_created, the_div=div, the_script=script)
 
 
 if __name__ == '__main__':

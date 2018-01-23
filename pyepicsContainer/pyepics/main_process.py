@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import threading
 from time import sleep
 import initialise_db as dbc
-from bpm import BPMdata
+from epics import PV
 
 user = os.getenv('POSTGRES_USER')
 passwd = os.getenv('POSTGRES_PASSWORD')
@@ -18,34 +18,33 @@ engine = create_engine(
         echo=True
     )
 
-BPMSumAmplitude = dbc.BPMSumAmplitude
-BPMSumPhase = dbc.BPMSumPhase
+CCStrace1 = dbc.CCStrace1
 
 
 class LockedDBUpdate:
-    def __init__(self, bpmnum):
+    def __init__(self, process_variable):
         self.lock = threading.Lock()
 
         db_session = sessionmaker(bind=engine)
         self.session = db_session()
 
-        self.bpm = bpmnum
+        self.pv = process_variable
 
     def get_and_commit(self):
         with self.lock:
             try:
                 self.session.add_all([
-                    BPMSumAmplitude(signal=[float(a) for a in self.bpm.sumSigAmp()]),
-                    BPMSumPhase(signal=[float(a) for a in self.bpm.sumSigPhase()]),
+                    CCStrace1(signal=[float(a) for a in self.pv.get() if abs(float(a))<1.0]),
                 ])
                 self.session.commit()
             except TypeError:
                 pass
 
 
-bpm = BPMdata(1)
-bpm_updater = LockedDBUpdate(bpm)
+process_variable = PV('CCS1:trace1:ArrayData')
+updater = LockedDBUpdate(process_variable)
 
 while True:
-    bpm_updater.get_and_commit()
+    updater.get_and_commit()
     sleep(1)
+
