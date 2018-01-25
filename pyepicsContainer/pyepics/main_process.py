@@ -25,12 +25,12 @@ class LockedDBUpdate:
     def __init__(self, process_variable):
         self.lock = threading.Lock()
 
-        db_session = sessionmaker(bind=engine)
-        self.session = db_session()
-
         self.pv = process_variable
 
     def get_and_commit(self):
+        db_session = sessionmaker(bind=engine)
+        self.session = db_session()
+
         with self.lock:
             try:
                 self.session.add_all([
@@ -39,6 +39,21 @@ class LockedDBUpdate:
                 self.session.commit()
             except TypeError:
                 pass
+        self.session.close()
+
+    def keep_DBsize_sane(self):
+        db_session = sessionmaker(bind=engine)
+        self.session = db_session()
+
+        with self.lock:
+            num = self.session.query(CCStrace1).count()
+            desc_id = self.session.query(CCStrace1).order_by(CCStrace1.id.desc()).first().id
+            if num > 50:
+                limit = desc_id - 25
+                self.session.query(CCStrace1).filter(CCStrace1.id < limit).delete()
+        self.session.close()
+        print(f'num = {num}')
+        print(f'desc_id = {desc_id}')
 
 
 #process_variable = PV('CCS1:trace1:ArrayData')
@@ -47,5 +62,6 @@ updater = LockedDBUpdate(process_variable)
 
 while True:
     updater.get_and_commit()
+    updater.keep_DBsize_sane()
     sleep(1)
 
