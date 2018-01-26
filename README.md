@@ -4,6 +4,8 @@ This is a web application built from containerised services.
 ![architecture](architecture_image.png "Layout of the web app")
 
 ## Usage
+This application requires Python3.6
+
 To start this service, you need to do four things:
 * Start the containers
 * Initialise the database
@@ -37,5 +39,6 @@ python3 main_process.py
 
 ### Start the server
 ```bash
+cd web/app
 python routes.py
 ```
