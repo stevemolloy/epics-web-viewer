@@ -43,7 +43,10 @@ class LockedDBUpdate:
     def keep_DBsize_sane(self):
         with self.lock:
             num = self.session.query(CCStrace1).count()
-            desc_id = self.session.query(CCStrace1).order_by(CCStrace1.id.desc()).first().id
+            try:
+                desc_id = self.session.query(CCStrace1).order_by(CCStrace1.id.desc()).first().id
+            except:
+                desc_id = 0
             if num > 50:
                 limit = desc_id - 25
                 self.session.query(CCStrace1).filter(CCStrace1.id < limit).delete()
